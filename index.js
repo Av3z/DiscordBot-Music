@@ -8,7 +8,12 @@ const TOKEN = config.TOKEN;
 const PREFIX = config.PREFIX;
 const OPTIONS = config['YT-Options'];
 
-let dispatcher = null;
+const servers = {
+    'server': {
+        connection: null,
+        dispatcher: null
+    }
+}
 
 client.on('ready', () => console.log(`Logged in as ${client.user.tag}!`));
 
@@ -24,29 +29,31 @@ client.on('message', async (msg) => {
 
 
     // commands
-    if (msg.content.startsWith(PREFIX + 'leave')) {
-        msg.reply('Saindo do canal de voz!');
-        msg.member.voice.channel.leave();
-        dispatcher = null;
-    }
-
     if(msg.content.startsWith(PREFIX + 'play')){
+
+        servers.server.connection = await msg.member.voice.channel.join();
+
         let music = msg.content.slice(6);
-        if(yt.validateURL(music)) {
-            dispatcher = await msg.member.voice.channel.join();
-            dispatcher.play(yt(music, OPTIONS));
-        }else {
-            msg.reply('Link inválido!');
-        }
+
+            if(yt.validateURL(music)) {
+                servers.server.dispatcher = servers.server.connection.play(yt(music, OPTIONS));
+            }else {
+                msg.reply('Seu link é inválido!');
+            }
+        
     }
 
     if(msg.content.startsWith(PREFIX + 'stop')) {
-        if(dispatcher === null) {
-            msg.reply("Você não esta tocando nenhuma musica para parar!");
-            return;
-        };
-        dispatcher.stop();
-        dispatcher = null;
+        msg.reply('Parando a musica.');
+        servers.server.dispatcher.stop();
+        servers.server.dispatcher = null;
+    }
+
+    if (msg.content.startsWith(PREFIX + 'leave')) {
+        msg.reply('Saindo do canal de voz!');
+        msg.member.voice.channel.leave();
+        servers.server.connection = null;
+        servers.server.dispatcher = null;
     }
 
 
