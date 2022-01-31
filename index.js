@@ -15,6 +15,15 @@ const servers = {
     }
 }
 
+function memberOnChannel(msg) {
+    if(!msg.member.voice.channel) {
+        msg.reply('Por favor entre em algum canal de voz antes de utilizar este comando!');
+        return false;
+    }
+
+    return true;
+}
+
 client.on('ready', () => console.log(`Logged in as ${client.user.tag}!`));
 
 client.on('message', async (msg) => {
@@ -22,15 +31,11 @@ client.on('message', async (msg) => {
     // Filters 
     if(!msg.guild) return;
     if(!msg.content.startsWith(PREFIX)) return;
-    if(!msg.member.voice.channel) {
-        msg.reply('Por favor entre em algum canal de voz antes de utilizar este comando!');
-        return;
-    }
 
 
     // commands
     if(msg.content.startsWith(PREFIX + 'play')){
-
+        if(!memberOnChannel(msg)) return;
         servers.server.connection = await msg.member.voice.channel.join();
 
         let music = msg.content.slice(6);
@@ -44,16 +49,24 @@ client.on('message', async (msg) => {
     }
 
     if(msg.content.startsWith(PREFIX + 'stop')) {
+        if(!memberOnChannel(msg)) return;
+
         msg.reply('Parando a musica.');
         servers.server.dispatcher.stop();
         servers.server.dispatcher = null;
     }
 
     if (msg.content.startsWith(PREFIX + 'leave')) {
+        if(!memberOnChannel(msg)) return;
+
         msg.reply('Saindo do canal de voz!');
         msg.member.voice.channel.leave();
         servers.server.connection = null;
         servers.server.dispatcher = null;
+    }
+
+    if(msg.content.startsWith(PREFIX + 'ping')) {
+        msg.reply(`Meu ping é : ${client.ws.ping} ms `);
     }
 
 
