@@ -1,6 +1,6 @@
 {
   "name": "bot-music",
-  "version": "1.0.2",
+  "version": "1.1.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -13,6 +13,7 @@
     "@discordjs/opus": "^0.5.3",
     "discord.js": "^12.5.1",
     "ffmpeg-static": "^4.3.0",
+    "googleapis": "^94.0.0",
     "ytdl-core": "^4.5.0"
   }
 }

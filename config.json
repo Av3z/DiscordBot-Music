@@ -1,6 +1,7 @@
 {
     "TOKEN": "",
     "PREFIX": "!",
+    "GOOGLE_API": "",
     "YT-Options": {
         "filter": "audioonly"
     }
